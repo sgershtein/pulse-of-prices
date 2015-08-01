@@ -1,0 +1,29 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: Graphical Mouse Cursor
+** proposed: 9.10.95 by sg
+** updated: 8.12.95 by sg
+** updated:
+*****************************************************************
+
+Graphical mouse cursor emulation is only used on EGA/VGA adapters in
+80x25 text mode.  Even there it can be switched of by calling
+Mouse::Emulation(FALSE).  The hand cursor looks pretty neet on EGA while on
+VGA there is some distortion, but it seems to be small enough.
+
+Working with emulated cursor is somewhat different from usual.
+First, the mouse cursor won't move by itself in the background.  The
+program must explicitly call EventQueue::next() or
+EventQueue::wait(). Even if program is busy doing some calculations
+and doesn't want to respond to user events at the moment, it must
+nevertheless call EventQueue::CheckEvents() often enought to allow
+emulated cursor moving when mouse is moved.
+
+The practice of calling Mouse::hide() before any direct screen update
+and Mouse::show() after it remains the same for both emulated and
+built-in cursors.
+
+Emulated cursor uses 6 graphical symbols for emulation.  This means
+these symbols can't be used by the program. For now these symbols
+are: 208, 215, 216, 202, 203, 207 (Ð × Ø Ê Ë Ï). It is possible to
+use any 6 symbols from range 0xb0 - 0xdf.

@@ -1,0 +1,202 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: Pulse security and copy protection
+** status: @@@ CONFIDENTIAL. NOT TO DISCLOSE. @@@
+** proposed: 12:07 20.12.1996
+** updated: 08.01.97 18:15
+** updated:
+******************************************************************
+
+The copy protection system used in Pulse is based upon the following
+terms and ideas: Computer Identifier Code (CIC), RSA open key encription
+algorithm, Simple xor-type database encoding, Electronic Keys.
+
+Algorithm advantages: it seems pretty hard to brute-force attack
+the protection system proposed.  Althoug the only unknown thing --
+the E code of RSA -- is only 16 bit long and thus can be guessed by
+repeated trials, actually it can only be done if all the algoritghms
+are known.  Otherwise it seems quite unlikely to guess even the length
+of the key, not to mention all the rest encryption/decryption algorithms.
+
+Disadvantages:  It seems fairly easy do get the code out when debugging
+Pulse on the authorised computer.  After that the code may be hard-coded
+into PP viever so that nothing else is required to decode the base. However,
+this task is not straightforward and if done by hand will only work for
+current version of the bases (for one week).  On the other hand, expirienced
+programmer will be able to write a program that will do the cracking
+automatically (on the authorised computer).
+
+
+1. Computer Identifier Code (CIC). Internal CIC (ICIC).
+
+This code should be easy to determin for each particular computer, but
+should be ideally unique for every computer.  On the other hand it is
+absolutely necessary that the code stays the same for the same computer
+and does not depend of the OS type or any other software characteristic.
+It is allowed though for the CIC to depend upon hardware charasteristic
+of the computer.
+
+The current algorithm of calculating the code follows.  Note that
+it is possible to change it in the future without affecting the other
+parts of the security scheme.  However changing the CIC determination
+algorithm (CICDA) requires all current users to resubmit the newly
+calculated CICs to the HQ which may be time consuming or otherwise
+unconvenient.
+
+There are currently two forms of CIC -- Internal (ICIC) which is used
+only inside of the program and is never printed out and External (ECIC)
+which is printed out to the user.  It is assumed that the end user knows
+only about the ECIC (which he/she calls CIC).
+
+CIC Determination Algorithm (CICDA):
+--------------------------------------------------------------------------
+unsigned char CIC[17] = "Pulse of Prices.\0";
+long *lp=(long*)CIC;
+if ( *((char*)0xf000fff7l)=='/' && *((char*)0xf000fffal)=='/') {
+   *lp++ = *((long*)0xf000fff5l);  // f000:fff5 - first half of BIOS date
+   *lp++ = *((long*)0xf000fff9l);  // f000:fff9 - second half of BIOS date
+} else {
+   cerr << "BIOS DATE NOT FOUND\n"; // should not come here
+}
+if ( *((unsigned short*)0xc0000000l) == 0xAA55 ) {
+   *lp++ = *((long*)0xc0000100l);  // c000:0100 - video adapter data
+   *lp   = *((long*)0xc0000110l);  // c000:0110 - some more
+} else {
+   cerr << "VIDEO ADAPTER NOT FOUND\n"; // should not come here
+}
+CIC[0] += CIC[16]; CIC[1] += CIC[15];
+CIC[2] += CIC[14]; CIC[3] += CIC[13];
+CIC[4] += CIC[12]; CIC[5] += CIC[11];
+CIC[6] += CIC[10]; CIC[7] += CIC[9];
+lp = (long*)CIC;
+lp[0] ^= lp[1];
+return *lp;	// ICIC is 4-byte long number
+--------------------------------------------------------------------------
+
+In current implementation ICIC is 4-byte long integer.
+
+
+2. External CIC (ECIC).
+
+Above described the internal form of CIC code.  For security reasons PP
+prints out CIC for a given computer in an encoded form.  We will call the
+encoded form of CIC "External CIC" or ECIC and it should not be confused to
+Internal CIC or ICIC.
+
+The first part of CIC encoding is adding a random salt value (0-255) to it
+as follows:
+
+   char solt=random(255);
+   CIC[0] ^= solt;
+   CIC[1] ^= ~solt;
+   CIC[2] ^= CIC[0];
+   CIC[3] ^= ~CIC[0];
+
+After that the RSA encoding with open key D is used upon the result (see
+below info regarding RSA):
+
+   unsigned *up=(unsigned*)CIC;
+   *up=DCODE(*up); up++;
+   *up=DCODE(*up);
+
+The resulting code (ECIC) is printed out in dashed-decimal form as following:
+   XSSS-BBBCCC-AAADDD
+
+Here
+   AAA, BBB, CCC, DDD - decimal notations (with leading zeros if necessary)
+                        of the first, second, third and fourth bytes of the
+                        encoded CIC.
+   SSS                - decimal notation (with leadind zeros if necessary)
+                        of the salt value.
+   X                  - The fool-proof digit which is choosen so that after
+                        adding all the single digits of the ECIC the result
+                        should end with zero (should devide by ten).
+
+
+3. Encoding the base.
+
+To increase security starting with the version 3 the PPD base is encoded
+with simple xor-type encryption.  Every week a random 23-bit long code
+is choosen as the encryption key (KEY).  The most significant bit (24th)
+is used as parity bit.
+
+The bits of the key are divided to the following groups:
+
+  most significant bit is on the left
+   1 1 11 1111 111 11111 11111111
+   | |  |    |   |     |        \
+   | |  |    |   |      \        ----- xor value for 8bit streams
+   | |  |    |    \      ------------- xor value for 5bit streams
+   | |  |     \    ------------------- xor value for 3bit streams
+   | |   \     ----------------------- xor value for 4bit streams
+   |  \   ---------------------------- xor value for 2bit streams
+    \  ------------------------------- xor value for 1bit stream
+     --------------------------------- parity bit (even parity)
+
+The xor values are used on corresponding bit streams in
+encoding/decoding routines (see ENCODING.TXD), namely in getbits/
+putbits methods of class StrPack.
+
+Although KEY is 24 bit long it is kept in unsigned long (32 bit long) form.
+The KEY itself is not kept in the base, but must instead be calculated
+using ICIC.
+
+
+4. Calculating the KEY.
+
+The PPG base contains keys database.  Each record of this database is a
+32 bit long code KMASK which together with ICIC can be used to calculate
+the KEY.  It is impossible to calsulate the KEY if the computer's CIC is
+not authorised.  To check if the KEY generated is the correct one, the
+control word is used (CWORD) which is kept in the base too.
+
+The KEY calculation algorithm follows;
+
+  for (int i=0; i<количество_KMASK; i++) {
+    KEY = DCODE(ICIC ^ KMASK[i]);
+    if (((char*)KEY)[3]!=0)
+      continue;     // the most significant byte must be zero
+    ushort CW =
+      ((((char*)KEY)[1] ^ ((char*)KEY[2]) ^ ((char*)KEY[0])) << 8) |
+      (((char*)KEY)[1] + ((char*)KEY[2]) + ((char*)KEY[0]));
+    if (CW =! CWORD)
+      continue;     // wrong control word - not a valid key
+  }
+  if (i>=количество_KMASK) {
+    // unathorised computer
+  } else
+    // authorised computer, KEY found
+
+
+5. Generating the KMASKs.
+
+For each authorised computer KMASK can be calculated as follows:
+
+  KMASK = ECODE(KEY) ^ ICIC
+
+The control word is calculated as follows:
+
+  CWORD = ((((char*)KEY)[1] ^ ((char*)KEY[2]) ^ ((char*)KEY[0])) << 8) |
+          (((char*)KEY)[1] + ((char*)KEY[2]) + ((char*)KEY[0]));
+
+All the KMASKs for authorised set of computers are stored in the file.
+
+
+6. RSA implementation (ECODE and DCODE)
+
+The system uses standard RSA encoding/decoding algorithms with fixed
+16bit keys.  One of the keys (D) is hard-coded into the client software,
+while the other one (E) is not supposed to be known outside of the base
+generating program,
+
+The RSA parameters are the folloging:
+
+N = 64769l
+E = 28451
+D = 131
+P = 1439
+Q = 1187
+
+Ecode function applies E mapping to the ushort number supplied while DCODE
+applies D mapping to the supplied number.  All the constants are hard-coded
+into the functions.

@@ -1,0 +1,299 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: Structure of the data files
+** proposed: 11.10.95 by sg
+** updated: 15.10.95 22:25 by sg
+** updated: 18.10.95 21:00 by sg
+** updated: 27.10.95 11:30 by sg
+** updated: 02.11.95 22:50 by sg
+** updated: 20.11.95 16:08 by sg
+** updated: 11:46 20.12.1996 by sg
+** updated: 08.01.97 18:11 by sg
+** updated: 13.01.97 16:08 by sg
+** updated:
+*****************************************************************
+
+1. File pulse.ppd - the main database
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Beginning of the file:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ   0  ณ  4 ณ char[4]       ณ Signature == "SGpd"                 บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   4  ณ  1 ณ byte          ณ File format version == 3            บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   5  ณ  2 ณ unsigned int  ณ Database creation date (number of   บ
+   บ      ณ    ณ               ณ days since 1-jan-1995)              บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   7  ณ  2 ณ unsigned int  ณ Database last update date (number   บ
+   บ      ณ    ณ               ณ of days since 1-jan-1995)           บ
+   บ      ณ    ณ               ณ [not used if number of updates is   บ
+   บ      ณ    ณ               ณ zero (see next field)]              บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   11 ณ  1 ณ byte          ณ Number of updates since creation    บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   12 ณ  ? ณ <records>     ณ Start of the data records           บ
+   ศออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออผ
+
+   For each record (starting at offset 12):
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  4 ณ unsigned long ณ **  Combined field:  **             บ
+   บ      ณ    ณ               ณ                                     บ
+   บ      ณ    ณ # & 0x7FFFFFFFณ bits 0-30 - Price.                  บ
+   บ      ณ    ณ               ณ                                     บ
+   บ      ณ    ณ (# >> 31) & 1 ณ bit 31 - Place for marking          บ
+   บ      ณ    ณ               ณ          current selection set.     บ
+   บ      ณ    ณ               ณ *UPDATE 18.10. Currently this       บ
+   บ      ณ    ณ               ณ *bit is not used and is alwaus 0.   บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +4  ณ  2 ณ unsigned int  ณ Firm code                           บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +6  ณ  1 ณ byte          ณ Payment method code                 บ
+   บ      ณ    ณ               ณ [Payment info record is in file     บ
+   บ      ณ    ณ               ณ pulse.ppi at ofs 22+code*16]        บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+*UPDATE 13.01.97 - this field excluded due to its absents in the
+*new database format
+   บ  +7  ณ  1 ณ byte          ณ Date of ad submition. Number of     บ
+   บ      ณ    ณ               ณ days BEFORE database last update    บ
+   บ      ณ    ณ               ณ date [see ofs. 7]                   บ
+   บ      ณ    ณ               ณ If == 255 then date is too old to   บ
+   บ      ณ    ณ               ณ be displayed.                       บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ [+8] ณ  1 ณ byte          ณ Length of the ad string             บ
+*UPDATE 13.01.97:
+      +7
+   บ [+9] ณ  ? ณ bit stream    ณ Encoded ad string                   บ
+*UPDATE 13.01.97:
+      +8
+   บ      ณ    ณ               ณ [for structure of this field see    บ
+   บ      ณ    ณ               ณ  ENCODING.TXD file]                 บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  Record length: 12 + length of encoded ad string                บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+   Note: In the above table all offsets are relative to the start of
+         the record.  It is also designated by a plus sign before
+         offset values.
+
+2. File pulse.ppi - file of indexes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Beginning of the file:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ   0  ณ  4 ณ char[4]       ณ Signature == "SGpi"                 บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   4  ณ  1 ณ byte          ณ File format version == 3            บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   5  ณ  4 ณ unsigned long ณ Offset of supply record list        บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   9  ณ  4 ณ unsigned long ณ Offset of demand record list        บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  13  ณ  4 ณ unsigned long ณ Offset of sorted supply list        บ
+   บ      ณ    ณ               ณ  [alphabetical sort by ad string]   บ
+   บ      ณ    ณ [NOT USED]    ณ **UPDATE 02.11 - FIELD NOT USED**   บ
+   บ      ณ    ณ               ณ *because alpha sort is not needed*  บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  17  ณ  4 ณ unsigned long ณ Offset of sorted demand list        บ
+   บ      ณ    ณ               ณ  [alphabetical sort by ad string]   บ
+   บ      ณ    ณ [NOT USED]    ณ **UPDATE 02.11 - FIELD NOT USED**   บ
+   บ      ณ    ณ               ณ *because alpha sort is not needed*  บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  21  ณ  1 ณ byte          ณ Number of payment methods           บ
+   วฤฤฤฤฤฤลฤฤฤฤมฤฤฤยฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  22  ณ 8*[21] ณ <record>  ณ Info - for each payment method      บ
+   วฤฤฤฤฤฤลฤฤฤฤยฤฤฤมฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  22+ ณ ?  ณ <start of     ณ                                     บ
+   บ8*[21]ณ    ณ  index lists> ณ                                     บ
+   ศออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออผ
+
+   Payment info record (starting at ofs 22) - for each payment method:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  4 ณ char[4]       ณ Payment abbreviation.               บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +4  ณ  4 ณ float         ณ Conversion to roubles coeficient    บ
+   บ      ณ    ณ               ณ if == 0 then no conversion          บ
+   บ      ณ    ณ               ณ [This value must not be modified    บ
+   บ      ณ    ณ               ณ by program. New setting should be   บ
+   บ      ณ    ณ               ณ saved in a separate file!]          บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +8  ณ  4 ณ unsigned long ณ Offset of sorted supply list        บ
+   บ      ณ    ณ               ณ [ascending sort by prices of this   บ
+   บ      ณ    ณ               ณ payment type]                       บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +12 ณ  4 ณ unsigned long ณ Offset of sorted demand list        บ
+   บ      ณ    ณ               ณ [ascending sort by prices of this   บ
+   บ      ณ    ณ               ณ payment type]                       บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  Record length: 16                                              บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+
+   Index list structure (any of them):
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  4 ณ unsigned long ณ Number of records in the list       บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +4  ณ  4 ณ unsigned long ณ Number!!! of the first record       บ
+   วฤฤฤฤฤฤมฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  ...                                                            บ
+   วฤฤฤฤฤฤยฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  ?   ณ  4 ณ unsigned long ณ Number!!! of the last record        บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ+n*4+4ณ  4 ณ          long ณ first index elem for supply group 1 บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ+n*4+8ณ  4 ณ          long ณ last index elem for supply group 1  บ
+   วฤฤฤฤฤฤมฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  ...   Note: If current payment not used in group, -1 is used   บ
+   วฤฤฤฤฤฤยฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤยฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ      ณ  4 ณ          long ณ first index elem for supply group m บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ      ณ  4 ณ          long ณ last index elem for supply group m  บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  List length: 4+4*(number of records)+8*(number of groups)      บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+   Note: In the above table all offsets are relative to the start of
+         the record.  It is also designated by a plus sign before
+         offset values.
+   Note: The most significant bit of the record offset value should
+         be stripped of.  It may be used for marking records and
+         must be ignored when calculating record offset in the file.
+**UPDATE 27.10: Instead of offsets, number of records must be kept in
+**all indexes except for the main one (native order), or there will be
+**no fast way of switching indexes!
+
+3. File pulse.ppf - firms info
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Beginning of the file:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ   0  ณ  4 ณ char[4]       ณ Signature == "SGpf"                 บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   4  ณ  1 ณ byte          ณ File format version == 3            บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   5  ณ  2 ณ unsigned int  ณ Number of firms                     บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   7  ณ  4 ณ unsigned long ณ Offset to firm record for firm 0    บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   11 ณ  4 ณ unsigned long ณ Offset to firm record for firm 1    บ
+   วฤฤฤฤฤฤมฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤมฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   ...                                                           บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+
+   Firm info record for each firm:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  2 ณ unsigned int  ณ Area code (000-999 are valid)       บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +2  ณ  3 ณ byte[3]       ณ Phone number 1                      บ
+   บ      ณ    ณ               ณ (b[0]<<16) + (b[1]<<8) + (b[2])     บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +5  ณ  3 ณ byte[3]       ณ Phone number 2                      บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +8  ณ  3 ณ byte[3]       ณ Phone number 3                      บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +11 ณ  3 ณ byte[3]       ณ Fax number                          บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +14 ณ  1 ณ byte          ณ Length of firm name                 บ
+   บ  +15 ณ [0]ณ char[]        ณ Firm name                           บ
+   บ      ณ    ณ               ณ [String in pascal format]           บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   ?  ณ  1 ณ byte          ณ Full name of the firm string length บ
+   บ      ณ  ? ณ char[]        ณ Full name of the firm               บ
+   บ      ณ    ณ               ณ [String in pascal format]           บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   ?  ณ  1 ณ byte          ณ Firm address string length          บ
+   บ      ณ  ? ณ char[]        ณ Firm address                        บ
+   บ      ณ    ณ               ณ [String in pascal format]           บ
+   บ      ณ    ณ               ณ *UPDATE 18.10:                      บ
+   บ      ณ    ณ               ณ In the string all accurences of     บ
+   บ      ณ    ณ               ณ "…ช โฅเจญกใเฃ" word are changed     บ
+   บ      ณ    ณ               ณ into '\1' character. This is done   บ
+   บ      ณ    ณ               ณ because this word if used in most   บ
+   บ      ณ    ณ               ณ addresses and allowes really pack   บ
+   บ      ณ    ณ               ณ the file.                           บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  List length: 17+total length of the included strings           บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+
+4. File pulse.ppg - groups info
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Beginning of the file:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ   0  ณ  4 ณ char[4]       ณ Signature == "SGpg"                 บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   4  ณ  1 ณ byte          ณ File format version == 3            บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   5  ณ  2 ณ word          ณ Number of groups                    บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   7  ณ  4 ณ unsigned long ณ Offset of the Keys database         บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  11  ณ  ? ณ <records>     ณ Group info record for each group    บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   ?  ณ  ? ณ <records>     ณ Keys database records               บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ   ?  ณ  ? ณ <chars>       ณ Username chars (without trailing    บ
+   บ      ณ    ณ               ณ till EOF. All chars are real ^ 131  บ
+   ศออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออผ
+
+   Group info record for each firm:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  4 ณ unsigned long ณ **  Combined field:  **             บ
+   บ      ณ    ณ               ณ                                     บ
+   บ      ณ    ณ # & 0x3FFFFFFFณ bits 0-29 - Number of records in    บ
+   บ      ณ    ณ               ณ             the group               บ
+   บ      ณ    ณ (# >> 30) & 1 ณ bit 30 - Are there supply ads in    บ
+   บ      ณ    ณ               ณ          this group?                บ
+   บ      ณ    ณ (# >> 31) & 1 ณ bit 31 - Are there demand ads in    บ
+   บ      ณ    ณ               ณ          this group?                บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +4  ณ  4 ณ unsigned long ณ First record of this group in .ppd  บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +8  ณ  1 ณ byte          ณ Group name string length            บ
+   บ      ณ  ? ณ char[]        ณ Group name string                   บ
+   บ      ณ    ณ               ณ [String in pascal format]           บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  List length: 5+length of the group name string                 บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+
+   Keys database:
+
+   ษออออออัออออัอออออออออออออออัอออออออออออออออออออออออออออออออออออออป
+   บ offs ณlen ณ type          ณ what                                บ
+   ฬออออออุออออุอออออออออออออออุอออออออออออออออออออออออออออออออออออออน
+   บ  +0  ณ  2 ณ ushort        ณ Number of Key Codes in the base     บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +2  ณ  2 ณ ushort        ณ Key control word (ala CRC)          บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  +4  ณ  4 ณ unsigned long ณ First key code in the base          บ
+   วฤฤฤฤฤฤลฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ
+   บ  .....                      All the codes                       บ
+   ฬออออออฯออออฯอออออออออออออออฯอออออออออออออออออออออออออออออออออออออน
+   บ  Database length: 4+[0]*4                                       บ
+   ศอออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออผ
+
+

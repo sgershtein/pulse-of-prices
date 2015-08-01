@@ -1,0 +1,19 @@
+/Tde/x/l/c/k /V3.10 /LD:\BC5\LIB;D:\BC5\!WORK\LIB +
+D:\BC5\LIB\c0l.obj+
+D:\BC5\!WORK\INTERM\ppclass1.obj+
+D:\BC5\!WORK\INTERM\date.obj+
+D:\BC5\!WORK\INTERM\bases.obj+
+D:\BC5\!WORK\INTERM\varray.obj+
+D:\BC5\!WORK\INTERM\keybmous.obj+
+D:\BC5\!WORK\INTERM\display.obj+
+D:\BC5\!WORK\INTERM\menu.obj+
+D:\BC5\!WORK\INTERM\ppclass.obj+
+D:\BC5\!WORK\INTERM\pp.obj
+D:\!WORK\CPP\PP\FINAL\pulse.exe
+
+d:\bc5\!work\lib\vfcrt.lib+
+D:\BC5\LIB\bidsl.lib+
+D:\BC5\LIB\emu.lib+
+D:\BC5\LIB\mathl.lib+
+D:\BC5\LIB\cl.lib
+

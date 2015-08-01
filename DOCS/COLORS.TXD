@@ -1,0 +1,20 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: Color attributes for monochrome monitors
+** proposed: 4.12.95 by sg (from TEACH40a documentation)
+** updated:
+*****************************************************************
+
+          TTL Monochrome Monitors
+         (eg, Hercules-compatible)     €   One-color Composite Monitors
+     ‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹€‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹‹
+      01H underline                    € 07H normal (white on black)
+      07H normal (white on black)      € 08H grey on black
+      09H bright underline             € 0fH bold (bright white on black)
+      0fH bold (bright white on black) € 70H reverse (black on white)
+      70H reverse (black on white)     € 78H grey on white
+      81H blinking underline           € 7fH bright white on white
+      87H blinking normal              € 87H blinking normal
+      89H blinking bright underline    € 8fH blinking bold
+      8fH blinking bold                €
+

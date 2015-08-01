@@ -1,0 +1,44 @@
+*******************************************************************
+** Input databases for PP documentation file
+** Title: Structure Of Input Databases
+** Created: ?
+** Modified: 06.01.97 by Andrew Kazakov (ABAK)
+*******************************************************************
+
+ADRESS_.DBF
+        Name        C 16    фирма
+        Firstofr    N 6     первое вхождение в offer_.dbf      // was 5
+        Post        C 60    адрес
+        Fullname    C 60    полное название фирмы              // was 120
+        Phone1      N 7     телефон ( 0 - если нет )
+        Phone2      N 7     телефон ( 0 - если нет )
+        Phone3      N 7     телефон ( 0 - если нет )
+        Fax         N 7     телефон ( 0 - если нет )
+        PhoneCod    C 7     код города                         // was 5
+        Profil      C 2     какое-то битовое поле - не нужно
+
+OFFER_.DBF
+        ProdType    N 4     номер записи в prodtyp_.dbf
+        Products    N 4     номер записи в product_.dbf
+        Adress      N 4     номер записи в adress_.dbf ( фирма )
+        Prevofr     N 6     предыдущее объявление этой фирмы  // new field
+        Nextofr     N 6     следующее объявление этой фирмы   // was 5
+        Price       N 12.2  цена
+        Currency    N 2     форма оплаты // code, was C4
+// removed        Data        C 5     дата подачи объявления
+        Offer       C 160   текст объявления
+
+PRODTYP_.DBF
+        Prodtype    C 48    название группы  // was 60
+        Firstsbr    N 4     название подгруппы 1-ая запись в product_.dbf
+        Lastsbr     N 4     название подгруппы последняя запись в product_.dbf
+// removed        Ofrtype     N 1     0 - спрос, 1 - предложение
+
+PRODUCT_.DBF
+        Products    C 48    название подгруппы // was 60
+        Prodtype    N 4     номер записи в prodtyp_.dbf
+        Firstofr    N 6     объявления в offer_.dbf 1-ая запись предл // was 5
+        Firstspros  N 6     объявления в offer_.dbf 1-ая запись спроса // new
+
+В случае если нет спроса по какой-то группе. то либо Firstspros == 0, либо
+следующий ненулевой Firstspros равен текущему.

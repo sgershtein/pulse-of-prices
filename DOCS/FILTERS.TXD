@@ -1,0 +1,55 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: Filters interface
+** proposed: 8.12.95 by sg
+** updated:
+******************************************************************
+
+How should filters be edited and stored?
+
+■┬▀°▓░ "<filter name>"
+(┬)
+ л■┬░▄─
+ ╨(┬▀┬)
+ ╨ ц▒▌└┘░├┬▓ "<subsring>"
+ ╨ ю÷┌▀÷┘▓▒÷ "<string>"
+ л■┬░▄─
+ ╨ ю█┘ ÷┌▀÷┘▓▒÷ "<string>"
+ л√┘█─
+ ╨(┬)
+ ╨ ц░─┌█─ x.xx
+ ╨ ц│▌▀°≤┘ ┬▀┬ ░─┌█─ x.xx
+ ╨ ю█┘ ░─┌█─ x.xx
+ х▌│ ÷┌▀┘█┬┘
+   ю█┘ ▒▌└┘░├┬▓ "<string>"
+
+Outside double line is AND connection, inside sigle line is OR connection.
+There may be several AND conditions for an element, as for firm above.
+
+---------------------------------------------------------------------------
+Storing the filters.
+
+All filters are stored in one file: filters.pp
+
+File structure:
+имммммяммммммяммммммммммяммммммммммммммммммммммммммммммммммммммммммммммммм╩
+╨ ofs Ё len  Ё content  Ё  meaning                                        ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨  +0 Ё   4  Ё  "SGft"  Ё  Signature                                      ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨  +4 Ё   2  Ё unsigned Ё  Length of this filter (in bytes) (incl. this)  ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨  +6 Ё   ?  Ё PString  Ё [string in Pascal format] filter name           ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨     Ё   1  Ё   byte   Ё AndCondition type                               ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨     Ё   1  Ё   byte   Ё Number of OrConditions in this AndCondition     ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+**** For each OrCondition *************************************************
+╨     Ё   1  Ё   byte   Ё OrCondition type                                ╨
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨     Ё   ?  Ё    ?     Ё PString / float (depending on AndCondition type)╨
+**** repeat till here for each OrCondition ********************************
+гдддддеддддддеддддддддддеддддддддддддддддддддддддддддддддддддддддддддддддд╤
+╨4+lenЁ   ?  Ё          Ё Start of next filter record                     ╨
+хмммммоммммммоммммммммммоммммммммммммммммммммммммммммммммммммммммммммммммм╪

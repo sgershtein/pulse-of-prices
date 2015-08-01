@@ -1,0 +1,103 @@
+*****************************************************************
+** PP by Sergey Gershtein documentation file
+** title: String Compression To Use For Databases
+** proposed: 3.10.95 by sg
+** updated: 13.10.95 22:00 by sg
+** updated: 14.10.95 00:04 by sg
+** updated: 15.10.95 20:55 by sg
+** updated: 16.10.95 13:50 by sg
+** updated: 18.10.95 21.00 by sg
+** updated: 11.02.96 18:12 by sg
+** updated:
+*****************************************************************
+
+*UPDATE 18.10:  The method below does not work as well as it was
+*supposed to because of lots of numbers and other characters in ads.
+*While it'll be still used in first versions, the idea is to move
+*slowly to Huffman encoding scheme with fixed tree (based on an
+*average expected character frequency, hard-coded into the program).
+*Another idea is to use repeated words somehow, although I don't know
+*yet how it can be done.
+
+Proposed method is a simple bit-stuffing, based on the fact that all
+the strings are capitalized and mostly single-lingual.
+
+1. The string is considered as a stream of bits, not bytes.
+
+1a. The string is preceded by a length byte in characters (0-255)
+    If length is zero, nothing follows. [[--The length is of the decoded
+    string!--REMOVED 14.10]]
+* UPDATE 14.10: 1. Length of the string excluding the length byte itself.
+* 2. If length byte = 255 then it is followed by a usual (not encoded
+* zero-terminated) string. It is useful when encoded length becomes bigger
+* than original one.
+*
+* UPDATE 14.10: The length byte gives the length of the encoded string!
+* GROUNDS: Otherwise the length of the encoded string can't be determined.
+* And since encoded string may contain zero bytes, a problem of using
+* strlen, strcpy function arises. Another problem: how much data to read
+* from input file to garantee that all the encoded string was read?
+
+2. The first bit of nonempty string sets the initial language:
+   1 - Russian
+   0 - English
+
+3. Most characters are encoded into 5-bit accord. This gives us 32
+   possible characters in either language (from 00000 to 11111).
+   Thirty one combinations decode into specific symbols, while 32nd
+   one is a quote mark. See encoding of specific chars below.
+* UPDATE: 11.02: Numbers are encoded into 4-bit accord.
+
+4. When a quote mark is encountered in the input stream it follows
+   by modifier bit:
+      1 = change current language command: Russian <-> English
+      0 = quote char command. This follows by 8-bit representing the
+         quoted ASCII character. The current language does not change.
+
+5. When all the characters of the string are extracted, the remaining
+   bits should be ignored.
+
+6. When encoding, change language command should be used only when there
+   are at least two characters in other language.  For one character
+   quote command should be used instead.
+
+*UPDATE 15.10.95: When encoding it might be necessary to add an extra
+*space character to the end of the string.  This is because the length
+*of decoded string may not always be calculated precisely. Anyway, an
+*extra space in the end won't harm anything.
+
+7. Expected average compression ratio is slightly worse than 8:5
+   (some 1.5 times)
+
+* UPDATE 11.02: 
+* 8. When number modifier found, it follows by 4-bit digits. 
+* After a quote digit followed by bit 1, language returns to the one
+* used byfore entering number mode.
+
+Character encodings:
+----------------------- Russian language ----------------------------
+char   Ä  Å  Ç  É  Ñ  Ö  Ü  á  à  â  ä  ã  å  ç  é  è  ê  ë  í  ì  [î]
+ascii  80 81 82 83 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f 90 91 92 93 [94]
+enc    00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 [14]
+
+char   ï  ñ  ó  ò  õ  ú  ù  û  ü <space> <quote> <number mode>
+ascii  95 96 97 98 9b 9c 9d 9e 9f  20     --        --
+enc    15 16 17 18 1b 1c 1d 1e 1f  19     1a        14
+
+The characters ö and ô were not included, so they have to be quoted.
+* UPDATE 11.02: also î
+
+----------------------- English language ----------------------------
+char   A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U
+ascii  41 42 43 44 45 46 47 48 49 4a 4b 4c 4d 4e 4f 50 51 52 53 54 55
+enc    00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14
+
+char   V  W  X  Y  Z  [|]  -  .  ,  <space> <quote> <number mode>
+ascii  56 57 58 59 5a [7c] 2d 2e 2c  20      --       --
+enc    15 16 17 18 19 [1a] 1b 1c 1d  1e      1f       1a
+
+-------------------------- Number mode ------------------------------
+char   0  1  2  3  4  5  6  7  8  9  .  |  -  "  <space>  <quote>
+ascii  30 31 32 33 34 35 36 37 38 39 2e 7c 2d 22  20       --
+enc    00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d  0e       0f
+
